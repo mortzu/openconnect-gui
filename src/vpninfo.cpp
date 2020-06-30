@@ -498,7 +498,7 @@ int VpnInfo::dtls_connect()
         int ret = openconnect_setup_dtls(vpninfo,
             ss->get_dtls_reconnect_timeout());
         if (ret != 0) {
-            this->last_err = QObject::tr("Error setting up DTLS");
+            this->last_err = QObject::tr("Error setting up DTLS (%1)").arg(ret);
             return ret;
         }
     }
