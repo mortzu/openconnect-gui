@@ -5,12 +5,13 @@ if(MINGW)
     if(NOT openconnect-TAG IN_LIST openconnect-TAG_CHOICES)
         message(FATAL_ERROR "Specify 'openconnect-TAG'. Must be one of ${openconnect-TAG_CHOICES}")
     endif()
+
+    set(tap-driver-TAG 9.24.2)
 endif()
 
 set(vpnc-scripts-TAG master)
 set(spdlog-TAG v1.8.5)
 set(qt-solutions-TAG master)
-set(tap-driver-TAG 9.21.2)
 
 
 if(CMAKE_CROSSCOMPILING AND MINGW)
