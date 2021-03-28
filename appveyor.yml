@@ -4,11 +4,11 @@ pull_requests:
 branches:
   except:
   - gh-pages
-image: Visual Studio 2017
+image: Visual Studio 2019
 clone_depth: 100
 environment:
-  QT5: C:\Qt\5.12\mingw73_64
-  MINGW: C:\Qt\Tools\mingw730_64
+  QT5: C:\Qt\5.15.2\mingw81_64
+  MINGW: C:\Qt\Tools\mingw810_64
   NSIS: C:\Program Files (x86)\NSIS
   matrix:
 #  - GENERATOR: '"MinGW Makefiles"'
