@@ -1,30 +1,41 @@
 #
 # Sample script to checkout & build 'openconnect' project
-# with MINGW32 on MSYS2 toolchain
+# with MINGW64 on MSYS2 toolchain
 #
 # It should be used only as illustration how to build application
 # and create an installer package
 #
-# (c) 2018-2019, Lubomir Carik
+# (c) 2018-2021, Lubomir Carik
 #
 
-[ "$MSYSTEM" != "MINGW32" ] && exit -1
+if [ "$MSYSTEM" == "MINGW64" ]; then
+    export BUILD_ARCH=x86_64
+    export MINGW_PREFIX=/mingw64
+elif [ "$MSYSTEM" == "MINGW32" ]; then
+    export BUILD_ARCH=i686
+    export MINGW_PREFIX=/mingw32
+else
+    echo "Unknown MSYS2 build environment..."
+    exit -1
+fi
 echo "Starting under $MSYSTEM build environment..."
-
-export BUILD_ARCH=i686
 
 if [ "$1" == "--head" ]; then
     export OC_TAG=master
     export STOKEN_TAG=master
 else
-    export OC_TAG=v8.02
+    export OC_TAG=v8.10
     export STOKEN_TAG=v0.92
 fi
 
-export OC_URL=git://git.infradead.org/users/dwmw2/openconnect.git
+export OC_URL=https://gitlab.com/openconnect/openconnect.git
 export STOKEN_URL=https://github.com/cernekee/stoken
 
 pacman --needed --noconfirm -S \
+    base-devel \
+    mingw-w64-x86_64-toolchain \
+    mingw-w64-${BUILD_ARCH}-gcc \
+    mingw-w64-${BUILD_ARCH}-make \
     mingw-w64-${BUILD_ARCH}-gnutls \
     mingw-w64-${BUILD_ARCH}-libidn2 \
     mingw-w64-${BUILD_ARCH}-libunistring \
@@ -34,38 +45,41 @@ pacman --needed --noconfirm -S \
     mingw-w64-${BUILD_ARCH}-zlib \
     mingw-w64-${BUILD_ARCH}-libxml2 \
     mingw-w64-${BUILD_ARCH}-zlib \
-    mingw-w64-${BUILD_ARCH}-libxml2 \
     mingw-w64-${BUILD_ARCH}-lz4 \
     mingw-w64-${BUILD_ARCH}-libproxy
 
 
-[ -d work ] || mkdir work
-cd work
+[ -d build-oc-$MSYSTEM ] || mkdir build-oc-$MSYSTEM
+cd build-oc-$MSYSTEM
 
-[ -d stoken ] ||  git clone ${STOKEN_URL}
+#CORES=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || sysctl -n hw.ncpu || echo "$NUMBER_OF_PROCESSORS")
+CORES=$(getconf _NPROCESSORS_ONLN)
+
+[ -d stoken ] || git clone ${STOKEN_URL}
 cd stoken
-git checkout -b ${STOKEN_TAG} ${STOKEN_TAG}
+git clean -fdx
+git reset --hard
+git checkout -f -b ${STOKEN_TAG} ${STOKEN_TAG}
 ./autogen.sh
 [ -d build-${BUILD_ARCH} ] || mkdir build-${BUILD_ARCH}
 cd build-${BUILD_ARCH}
-git clean -fdx
 ../configure --disable-dependency-tracking --without-tomcrypt --without-gtk
-mingw32-make -j4
+mingw32-make -j${CORES}
 mingw32-make install
 cd ../../
 
 [ -d openconnect ] || git clone ${OC_URL}
 cd openconnect
+git clean -fdx
 git reset --hard
+git checkout -f -b ${OC_TAG} ${OC_TAG}
 echo "hash:"
-git rev-parse --short HEAD
-git checkout -b ${OC_TAG} ${OC_TAG}
+git rev-parse --short HEAD | tee ../openconnect-${OC_TAG}_$MSYSTEM.hash
 ./autogen.sh
 [ -d build-${BUILD_ARCH} ] || mkdir build-${BUILD_ARCH}
 cd build-${BUILD_ARCH}
-git clean -fdx
 ../configure --disable-dependency-tracking --with-gnutls --without-openssl --without-libpskc --with-vpnc-script=vpnc-script-win.js
-mingw32-make -j4
+mingw32-make -j${CORES}
 cd ../../
 
 
@@ -74,18 +88,15 @@ cd ../../
 # incl. all dependencies (hardcoded paths!)
 #
 
-export MINGW_PREFIX=/mingw32
-
 rm -rf pkg
 mkdir -p pkg/nsis && cd pkg/nsis
-#cp ${MINGW_PREFIX}/bin/iconv.dll .
-cp ${MINGW_PREFIX}/bin/libffi-6.dll .
+cp ${MINGW_PREFIX}/bin/libffi-7.dll .
 cp ${MINGW_PREFIX}/bin/libgcc_*-1.dll .
 cp ${MINGW_PREFIX}/bin/libgmp-10.dll .
 cp ${MINGW_PREFIX}/bin/libgnutls-30.dll .
-cp ${MINGW_PREFIX}/bin/libhogweed-4.dll .
+cp ${MINGW_PREFIX}/bin/libhogweed-6.dll .
 cp ${MINGW_PREFIX}/bin/libintl-8.dll .
-cp ${MINGW_PREFIX}/bin/libnettle-6.dll .
+cp ${MINGW_PREFIX}/bin/libnettle-8.dll .
 cp ${MINGW_PREFIX}/bin/libp11-kit-0.dll .
 cp ${MINGW_PREFIX}/bin/libtasn1-6.dll .
 cp ${MINGW_PREFIX}/bin/libwinpthread-1.dll .
@@ -96,12 +107,12 @@ cp ${MINGW_PREFIX}/bin/libproxy-1.dll .
 cp ${MINGW_PREFIX}/bin/liblz4.dll .
 cp ${MINGW_PREFIX}/bin/libiconv-2.dll .
 cp ${MINGW_PREFIX}/bin/libunistring-2.dll .
-cp ${MINGW_PREFIX}/bin/libidn2-4.dll .
+cp ${MINGW_PREFIX}/bin/libidn2-0.dll .
 cp ${MINGW_PREFIX}/bin/libstdc++-6.dll .
 cp ${MINGW_PREFIX}/bin/liblzma-5.dll .
 cp ../../openconnect/build-${BUILD_ARCH}/.libs/libopenconnect-5.dll .
 cp ../../openconnect/build-${BUILD_ARCH}/.libs/openconnect.exe .
-curl -v -o vpnc-script-win.js http://git.infradead.org/users/dwmw2/vpnc-scripts.git/blob_plain/HEAD:/vpnc-script-win.js
+curl -v -o vpnc-script-win.js https://gitlab.com/openconnect/vpnc-scripts/raw/master/vpnc-script-win.js
 cd ../../
 
 mkdir -p pkg/lib && cd pkg/lib
@@ -173,7 +184,6 @@ pacman -Q \
     mingw-w64-${BUILD_ARCH}-p11-kit \
     mingw-w64-${BUILD_ARCH}-libxml2 \
     mingw-w64-${BUILD_ARCH}-zlib \
-    mingw-w64-${BUILD_ARCH}-libxml2 \
     mingw-w64-${BUILD_ARCH}-lz4 \
     mingw-w64-${BUILD_ARCH}-libproxy \
     >> openconnect-${OC_TAG}_$MSYSTEM.txt
@@ -181,4 +191,4 @@ pacman -Q \
 sha512sum.exe openconnect-${OC_TAG}_$MSYSTEM.zip > openconnect-${OC_TAG}_$MSYSTEM.zip.sha512
 sha512sum.exe openconnect-devel-${OC_TAG}_$MSYSTEM.zip > openconnect-devel-${OC_TAG}_$MSYSTEM.zip.sha512
 
-mv -v openconnect-*.zip openconnect-*.txt openconnect-*.zip.sha512 ..
+mv -vu openconnect-*.zip openconnect-*.txt openconnect-*.zip.sha512 openconnect-${OC_TAG}_$MSYSTEM.hash ../../external
