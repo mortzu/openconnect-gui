@@ -6,6 +6,13 @@ if(MINGW)
         message(FATAL_ERROR "Specify 'openconnect-TAG'. Must be one of ${openconnect-TAG_CHOICES}")
     endif()
 
+    # source: http://build.openvpn.net/downloads/releases/
+    set(tap-driver-os "Win10" CACHE STRING "Please specify tap-driver target OS")
+    set(tap-driver-os_CHOICES "Win10" "Win7")
+    set_property(CACHE tap-driver-os PROPERTY STRINGS ${tap-driver-os_CHOICES})
+    if(NOT tap-driver-os IN_LIST tap-driver-os_CHOICES)
+        message(FATAL_ERROR "Specify 'tap-driver-os'. Must be one of ${tap-driver-os_CHOICES}")
+    endif()
     set(tap-driver-TAG 9.24.2)
 endif()
 
