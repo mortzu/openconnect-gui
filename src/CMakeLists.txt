@@ -167,13 +167,11 @@ install(TARGETS ${PROJECT_NAME}
 # fixup the bundle
 get_target_property(QT_LIBRARY_DIR Qt5::Core LOCATION)
 get_filename_component(QT_LIBRARY_DIR ${QT_LIBRARY_DIR} PATH)
-get_filename_component(QT_LIBRARY_DIR "${QT_LIBRARY_DIR}/.." ABSOLUTE)
 list(APPEND libSearchDirs ${QT_LIBRARY_DIR})
 
 if(MINGW)
     set(APPS "\${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}.exe")
-    #set(APPS "\${CMAKE_INSTALL_PREFIX}/./${PROJECT_NAME}.exe")
-    list(APPEND libSearchDirs ${CMAKE_BINARY_DIR}/external/lib)
+    list(APPEND libSearchDirs ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
     # Qt Platform Plugin
     install(FILES
