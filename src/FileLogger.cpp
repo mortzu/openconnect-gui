@@ -5,6 +5,8 @@
 #include <QDir>
 #include <QMessageBox>
 
+#include <spdlog/spdlog.h>
+
 namespace spd = spdlog;
 
 FileLogger::FileLogger(QObject* parent, const QString& logPath, const size_t logSize, const size_t logCount)
