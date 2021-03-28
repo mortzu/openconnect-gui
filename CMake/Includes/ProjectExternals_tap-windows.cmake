@@ -11,7 +11,8 @@ ExternalProject_Add(tap-windows
     DOWNLOAD_NO_PROGRESS 1
     DOWNLOAD_NO_EXTRACT 1
 
-    URL https://swupdate.openvpn.org/community/releases/tap-windows-${tap-driver-TAG}.exe
+    #URL https://swupdate.openvpn.org/community/releases/tap-windows-${tap-driver-TAG}.exe
+    URL https://build.openvpn.net/downloads/releases/tap-windows-${tap-driver-TAG}-I601-${tap-driver-os}.exe
 
     BUILD_IN_SOURCE 1
 
