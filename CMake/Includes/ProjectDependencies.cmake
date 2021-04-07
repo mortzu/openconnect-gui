@@ -17,8 +17,9 @@ if(APPLE)
     endif()
 endif()
 
-# macOS & GNU/Linux dependencies
-if(UNIX)
+# On MacOS, Linux or when cross-building for Windows we have sane
+# package management. Use it.
+if(CMAKE_CROSSCOMPILING OR NOT WIN32)
     find_package(GnuTLS REQUIRED)
     if(GNUTLS_FOUND)
         message(STATUS "Library 'GnuTLS' found at ${GNUTLS_LIBRARIES}")
@@ -35,24 +36,28 @@ if(UNIX)
     else()
         message(FATAL_ERROR "Libraru 'OpenConnect' not found! Install it vie e.g. 'brew install openconnect or 'dnf install openconnect'")
     endif()
-    
+
+    # This is optional as the package isn't ubiquitous. We'll pull it
+    # in and build it locally if not found.
     find_package(spdlog CONFIG)
-    
+endif()
+
+if(UNIX)
     set(CMAKE_THREAD_PREFER_PTHREAD ON)
     find_package(Threads REQUIRED)
+endif()
 
-    if(APPLE)
-        find_library(SECURITY_LIBRARY Security REQUIRED)
-        if(SECURITY_LIBRARY)
-            message(STATUS "Framework 'Security' found at ${SECURITY_LIBRARY}")
+if(APPLE)
+    find_library(SECURITY_LIBRARY Security REQUIRED)
+    if(SECURITY_LIBRARY)
+        message(STATUS "Framework 'Security' found at ${SECURITY_LIBRARY}")
 
-            link_directories(${SECURITY_LIBRARY_DIRS})
-            include_directories(SYSTEM ${SECURITY_LIBRARY_INCLUDE_DIRS})
-        else()
-            message(FATAL_ERROR "Framework 'Security' not found!")
-        endif()
-        mark_as_advanced(SECURITY_LIBRARY)
+        link_directories(${SECURITY_LIBRARY_DIRS})
+        include_directories(SYSTEM ${SECURITY_LIBRARY_INCLUDE_DIRS})
+    else()
+        message(FATAL_ERROR "Framework 'Security' not found!")
     endif()
+    mark_as_advanced(SECURITY_LIBRARY)
 endif()
 
 # mingw32/mingw64 and other external dependencies

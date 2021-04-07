@@ -86,8 +86,6 @@ if(MINGW)
     )
 
     add_dependencies(${PROJECT_NAME}
-        openconnect-devel-${openconnect-TAG}
-        openconnect-${openconnect-TAG}
         vpnc-scripts-${vpnc-scripts-TAG}
     )
 
@@ -98,7 +96,15 @@ if(MINGW)
     target_link_libraries (${PROJECT_NAME}
         # system libraries
         wsock32
+    )
+endif()
 
+if(WIN32 AND NOT CMAKE_CROSSCOMPILING)
+    add_dependencies(${PROJECT_NAME}
+        openconnect-devel-${openconnect-TAG}
+        openconnect-${openconnect-TAG}
+    )
+    target_link_libraries (${PROJECT_NAME}
         # 3rd party dependencies
         openconnect::gmp
         openconnect::gnutls
@@ -108,6 +114,11 @@ if(MINGW)
         openconnect::p11-kit
         openconnect::stoken
         openconnect::xml2
+    )
+else()
+    target_link_libraries (${PROJECT_NAME}
+        ${OPENCONNECT_LIBRARIES}
+        ${GNUTLS_LIBRARY}
     )
 endif()
 
@@ -145,9 +156,6 @@ target_link_libraries (${PROJECT_NAME}
 
 if(UNIX)
     target_link_libraries(${PROJECT_NAME}
-        ${OPENCONNECT_LIBRARIES}
-        ${GNUTLS_LIBRARY}
-
         Threads::Threads
     )
     if(APPLE)
