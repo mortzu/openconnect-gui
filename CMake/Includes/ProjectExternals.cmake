@@ -17,9 +17,7 @@ if(MINGW)
 endif()
 
 set(vpnc-scripts-TAG master)
-set(spdlog-TAG v1.8.5)
 set(qt-solutions-TAG master)
-
 
 if(CMAKE_CROSSCOMPILING AND MINGW)
     # Fedora mingw32/mingw64
@@ -39,7 +37,12 @@ include(ExternalProject)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/external/include)
 
-include(ProjectExternals_spdlog)
+if(NOT spdlog_FOUND)
+    message(STATUS "Using local spdlog build")
+    set(spdlog-TAG v1.8.5)
+    include(ProjectExternals_spdlog)
+endif()
+
 include(ProjectExternals_qt-solutions)
 if(MINGW)
     include(ProjectExternals_openconnect)
