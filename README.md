@@ -25,6 +25,7 @@ Look to [OpenConnect-GUI](http://openconnect.github.io/openconnect-gui/) project
 - [OpenConnect library compilation and dependencies](docs/openconnect.md)
 - [Web page maintenance](docs/webpage.md)
 - [Snapshot builds](docs/snapshots.md)
+- [AppVeyor CI builds](https://ci.appveyor.com/project/horar/openconnect-gui/history)
 
 # License
 The content of this project itself is licensed under the [GNU General Public License v2](LICENSE.txt)
