@@ -8,8 +8,9 @@ MinGW32:
   script:
   - mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc
   - echo ':DOSWin:M::MZ::/usr/bin/wine:' > /proc/sys/fs/binfmt_misc/register
-  - dnf copr enable dwmw2/openconnect
-  - dnf install mingw32-openconnect mingw32-spdlog
+  - dnf -y install dnf-plugins-core
+  - dnf -y copr enable dwmw2/openconnect
+  - dnf -y install mingw32-openconnect mingw32-spdlog
   - mingw32-cmake .
   - make -j4
   tags:
@@ -28,8 +29,9 @@ MinGW64:
   - dnf remove -y wine.i686
   - mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc
   - echo ':DOSWin:M::MZ::/usr/bin/wine:' > /proc/sys/fs/binfmt_misc/register
-  - dnf copr enable dwmw2/openconnect
-  - dnf install mingw64-openconnect mingw64-spdlog
+  - dnf -y install dlugins-core
+  - dnf -y copr enable dwmw2/openconnect
+  - dnf -y install mingw64-openconnect mingw64-spdlog
   - mingw64-cmake .
   - make -j4
   tags:
