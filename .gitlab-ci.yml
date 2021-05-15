@@ -1,4 +1,5 @@
 variables:
+  BUILD_IMAGES_PROJECT: openconnect/build-images
   FEDORA_BUILD: openconnect-cli-fedora
 
 image: $CI_REGISTRY/$BUILD_IMAGES_PROJECT:$FEDORA_BUILD
