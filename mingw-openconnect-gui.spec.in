@@ -146,7 +146,7 @@ install -m0755 build_win64/bin/openconnect-gui.exe $RPM_BUILD_ROOT/%{mingw64_bin
 %{mingw32_bindir}/openconnect-gui.exe
 
 #%files -n mingw32-openconnect-gui-installer
-#%{mingw32_bindir}/openconnect-gui-installer-*.exe
+#{mingw32_bindir}/openconnect-gui-installer-*.exe
 
 #Win64
 %files -n mingw64-openconnect-gui
@@ -154,7 +154,7 @@ install -m0755 build_win64/bin/openconnect-gui.exe $RPM_BUILD_ROOT/%{mingw64_bin
 %{mingw64_bindir}/openconnect-gui.exe
 
 #%files -n mingw64-openconnect-gui-installer
-#%{mingw64_bindir}/openconnect-gui-installer-*.exe
+#{mingw64_bindir}/openconnect-gui-installer-*.exe
 
 %changelog
 * Sun May 16 2021 David Woodhouse <dwmw2@infradead.org> - %{version}-%{release}
