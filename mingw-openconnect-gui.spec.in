@@ -111,7 +111,15 @@ make %{?_smp_mflags} V=1 -C build_win64 qt-solutions-master
 %mingw_make %{?_smp_mflags} V=1
 
 %install
-%mingw_make install DESTDIR=$RPM_BUILD_ROOT
+# The project's "make install" is fairly hosed too, so just install
+# openconnect-gui.exe manually.
+mkdir -p $RPM_BUILD_ROOT/%{mingw32_bindir}
+install -m0755 build_win32/bin/openconnect-gui.exe $RPM_BUILD_ROOT/%{mingw32_bindir}/openconnect-gui.exe
+mkdir -p $RPM_BUILD_ROOT/%{mingw64_bindir}
+install -m0755 build_win64/bin/openconnect-gui.exe $RPM_BUILD_ROOT/%{mingw64_bindir}/openconnect-gui.exe
+
+
+#mingw_make install DESTDIR=$RPM_BUILD_ROOT
 
 #install -m 0644 build_win32/openconnect-gui-installer.exe $RPM_BUILD_ROOT/%{mingw32_bindir}/openconnect-gui-installer-%{version}-%{release}.exe
 #install -m 0644 build_win64/openconnect-gui-installer.exe $RPM_BUILD_ROOT/%{mingw64_bindir}/openconnect-gui-installer-%{version}-%{release}.exe
