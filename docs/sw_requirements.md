@@ -11,7 +11,7 @@ This is target platform for the product.
     - Tools/QtCreator CDB Debugger support
 - [NSIS 3.0+](https://sourceforge.net/projects/nsis)
 - [CMake 3.12+](https://cmake.org/)
-- [Git 2.30+](https://git-scm.com/)
+- [Git 2.30+](https://git-scm.com/) incl. Git LFS
 
 ##### Externals
 
@@ -27,7 +27,7 @@ These projects will be downloaded automatically by CMake.
 ##### Fedora 28 (MinGW32)
 Just try install following packages:
 
-    sudo dnf install -y git
+    sudo dnf install -y git git-lfs
     sudo dnf install -y cmake
     sudo dnf install -y mingw32-qt5-qtbase
     sudo dnf install -y mingw32-nsis
