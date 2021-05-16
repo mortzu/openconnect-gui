@@ -100,8 +100,15 @@ The OpenConnect multiprotocol VPN client GUI for 64-bit Windows.
 %endif
 
 %mingw_cmake .
-%mingw_make %{?_smp_mflags} V=1
 
+# The dependencies for this are utterly hosed, and because it's using
+# the "pointless new build system du jour" of five years ago, I have
+# no idea how to fix them. Simply using add_dependencies() to try to
+# make openconnect-gui depend on qt-solutions::qtsingleapplication
+# doesn't appear to suffice. So just manually build it first.
+make %{?_smp_mflags} V=1 -C build_win32 qt-solutions-master
+make %{?_smp_mflags} V=1 -C build_win64 qt-solutions-master
+%mingw_make %{?_smp_mflags} V=1
 
 %install
 %mingw_make install DESTDIR=$RPM_BUILD_ROOT
