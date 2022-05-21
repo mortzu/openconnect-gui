@@ -6,6 +6,7 @@
 TARGET=mingw-openconnect-gui
 
 srpm: /usr/bin/git
+	git config --global --add safe.directory "*"
 	./mkspec.sh $(TARGET)
 	set -x;	if grep -q "global gitsnapshot 1" $(TARGET).spec; then \
 		tarprefix=$$(sed -n '/^%global snapcommit /s/.* //p' $(TARGET).spec); \
